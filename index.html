@@ -3,27 +3,96 @@
 <html>
 	<head>
 		<meta charset="utf-8"/>		
-<!-- 		<link href="assets/css/reset.css" rel="stylesheet">
- --> 		<link href="https://fonts.googleapis.com/css?family=Quicksand|Dosis" rel="stylesheet">		
-<!-- 		<link href="assets/css/style.css" rel="stylesheet">
- -->
+			<link href="assets/css/reset.css" rel="stylesheet">
+			<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+
 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 		<title>Anne Simon | GifTastic</title>
 
 	</head>
 	
-	<body>
-		<h1>GifTastic</h1>
-			<p>Welcome to my GifTastic page on the topic of food!</p>
+	<body class="w3-margin">
+		<div class="w3-panel w3-blue-grey">
+  			<h1 class="w3-text-orange" style="text-shadow:1px 1px 0 #444">Food GifTastic</h1>
+		</div>
+
+		<div id="foodButtons" class="w3-threequarter"></div>
+
+		<div id="foodView"></div>
+
+
+		<form id="foodForm" class="w3-container w3-card-4 w3-quarter w3-padding-16">
+			<div class="w3-row w3-section">
+  				<label class="w3-padding-16">Add any food</label>  				
+				<input class="w3-input w3-hover-pale-yellow" type="text" id="foodInput">
+			</div>
 			
-	
+			<input id="addFood" type="submit" value="Add" class="w3-btn w3-blue-grey">
+			<br/>
+		</form>
+
 
 	<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
 
 <script>
 
-//Array: pizza, avocado, cake, waffle, pasta, doughnut, bacon, burger, tacos
+//Initial array of food
+var foodArr = ["pizza", "avocado", "cake", "waffle", "pasta", "doughnut", "bacon", "burger", "tacos", "sushi"];
+
+//displayFood function shows content on the HTML page
+//http://api.giphy.com/v1/gifs/search?q=funny+cat&api_key=YOUR_API_KEY
+function displayFood() {
+	var myFood = $(this).attr("data-name");
+	var queryURL = "https://api.giphy.com/v1/gifs/search?q=" + myFood + "api_key=dnxkPUxOa1usAjdexJlE3x3stA1g4n3v";
+
+	$.ajax({
+		url:queryURL,
+		method:"GET"
+	}).then(function(response) {
+
+		//Creating a div to hold the food content
+		var foodDiv = $("div class='food'>");
+
+		//Store rating data
+		var rating = response.rating;
+
+		//Create paragraph to have rating displayed
+		var ratingP = $("<p>").text("Rating: " + rating);
+
+		//Display the rating
+		foodDiv.append(ratingP);
+
+		//Putting food content on display
+		$("#foodView").prepend(foodDiv);
+
+	});
+}
+	//Function for displaying food data
+	function renderButtons() {
+		//Deleting the food prior to adding new food
+		// $("#foodButtons").empty();
+
+		//Looping through array of food
+
+		for (var i=0; i<foodArr.length; i++) {
+			//dynamically generate buttons for each food in the array
+			var b = $("<button class='w3-btn w3-border w3-border-blue-grey w3-text-blue-grey w3-round w3-margin'>");
+			//adding a class of foodBtn to each button
+			b.addClass("foodBtn");
+			//adding a data-attribute
+			b.attr("data-name",foodArr[i]);
+			//providing the initial button text
+			b.text(foodArr[i]);
+			//adding the button to the foodButtons div
+			$("#foodButtons").append(b);
+		}
+	}
+
+renderButtons();
+
+
+
 
 </script>
 
