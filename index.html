@@ -17,14 +17,15 @@
   			<h1 class="w3-text-orange" style="text-shadow:1px 1px 0 #444">Food GifTastic</h1>
 		</div>
 
-		<div id="foodButtons" class="w3-threequarter"></div>
+		<div class="w3-threequarter">
+			<div id="foodButtons"></div>
 
-		<div id="foodView"></div>
-
+			<div id="foodView"></div>
+		</div><!--end w3-threequarter"-->
 
 		<form id="foodForm" class="w3-container w3-card-4 w3-quarter w3-padding-16">
 			<div class="w3-row w3-section">
-  				<label class="w3-padding-16">Add any food</label>  				
+  				<label for="foodInput" class="w3-padding-16">Add any food</label>  				
 				<input class="w3-input w3-hover-pale-yellow" type="text" id="foodInput">
 			</div>
 			
@@ -41,15 +42,15 @@
 var foodArr = ["pizza", "avocado", "cake", "waffle", "pasta", "doughnut", "bacon", "burger", "tacos", "sushi"];
 
 //displayFood function shows content on the HTML page
-//http://api.giphy.com/v1/gifs/search?q=funny+cat&api_key=YOUR_API_KEY
 function displayFood() {
 	var myFood = $(this).attr("data-name");
-	var queryURL = "https://api.giphy.com/v1/gifs/search?q=" + myFood + "api_key=dnxkPUxOa1usAjdexJlE3x3stA1g4n3v";
+	var queryURL = "https://api.giphy.com/v1/gifs/search?q=" + myFood + "&api_key=dnxkPUxOa1usAjdexJlE3x3stA1g4n3v";
 
 	$.ajax({
 		url:queryURL,
 		method:"GET"
 	}).then(function(response) {
+
 
 		//Creating a div to hold the food content
 		var foodDiv = $("div class='food'>");
@@ -68,27 +69,42 @@ function displayFood() {
 
 	});
 }
-	//Function for displaying food data
-	function renderButtons() {
-		//Deleting the food prior to adding new food
-		// $("#foodButtons").empty();
+	
+//Function for displaying food data
+function renderButtons() {
+	//Deleting the food prior to adding new food
+	$("#foodButtons").empty();
 
-		//Looping through array of food
+	//Looping through array of food
 
-		for (var i=0; i<foodArr.length; i++) {
-			//dynamically generate buttons for each food in the array
-			var b = $("<button class='w3-btn w3-border w3-border-blue-grey w3-text-blue-grey w3-round w3-margin'>");
-			//adding a class of foodBtn to each button
-			b.addClass("foodBtn");
-			//adding a data-attribute
-			b.attr("data-name",foodArr[i]);
-			//providing the initial button text
-			b.text(foodArr[i]);
-			//adding the button to the foodButtons div
-			$("#foodButtons").append(b);
-		}
+	for (var i=0; i<foodArr.length; i++) {
+		//dynamically generate buttons for each food in the array
+		var b = $("<button class='w3-btn w3-border w3-border-blue-grey w3-text-blue-grey w3-round w3-margin'>");
+		//adding a class of foodBtn to each button
+		b.addClass("foodBtn");
+		//adding a data-attribute
+		b.attr("data-name",foodArr[i]);
+		//providing the initial button text
+		b.text(foodArr[i]);
+		//adding the button to the foodButtons div
+		$("#foodButtons").append(b);
 	}
+}
 
+//Function handles events where a food button is clicked
+$("#addFood").on("click", function(event) {
+	event.preventDefault();
+
+	var food = $("#foodInput").val().trim();
+
+	foodArr.push(food);
+
+renderButtons();
+
+
+});
+
+ $(document).on("click", ".foodBtn", displayFood);
 renderButtons();
 
 
