@@ -20,7 +20,7 @@
 		<div class="w3-threequarter">
 			<div id="foodButtons"></div>
 
-			<div id="foodView"></div>
+			<div id="foodDiv"></div>
 		</div><!--end w3-threequarter"-->
 
 		<form id="foodForm" class="w3-container w3-card-4 w3-quarter w3-padding-16">
@@ -38,78 +38,82 @@
 
 <script>
 
+$(document).ready(function(){
+
 //Initial array of food
 var foodArr = ["pizza", "avocado", "cake", "waffle", "pasta", "doughnut", "bacon", "burger", "tacos", "sushi"];
 
-//displayFood function shows content on the HTML page
-function displayFood() {
-	var myFood = $(this).attr("data-name");
-	var queryURL = "https://api.giphy.com/v1/gifs/search?q=" + myFood + "&api_key=dnxkPUxOa1usAjdexJlE3x3stA1g4n3v";
 
-	$.ajax({
-		url:queryURL,
-		method:"GET"
-	}).then(function(response) {
-
-
-		//Creating a div to hold the food content
-		var foodDiv = $("div class='food'>");
-
-		//Store rating data
-		var rating = response.rating;
-
-		//Create paragraph to have rating displayed
-		var ratingP = $("<p>").text("Rating: " + rating);
-
-		//Display the rating
-		foodDiv.append(ratingP);
-
-		//Putting food content on display
-		$("#foodView").prepend(foodDiv);
-
-	});
-}
 	
 //Function for displaying food data
 function renderButtons() {
 	//Deleting the food prior to adding new food
 	$("#foodButtons").empty();
 
-	//Looping through array of food
-
 	for (var i=0; i<foodArr.length; i++) {
 		//dynamically generate buttons for each food in the array
 		var b = $("<button class='w3-btn w3-border w3-border-blue-grey w3-text-blue-grey w3-round w3-margin'>");
-		//adding a class of foodBtn to each button
 		b.addClass("foodBtn");
-		//adding a data-attribute
 		b.attr("data-name",foodArr[i]);
-		//providing the initial button text
 		b.text(foodArr[i]);
-		//adding the button to the foodButtons div
 		$("#foodButtons").append(b);
 	}
 }
-
 //Function handles events where a food button is clicked
 $("#addFood").on("click", function(event) {
+	//prevent default event of submitting form
 	event.preventDefault();
 
+	//store in var food the value of foodInput text field (and trim the whitespace) and add it to array
 	var food = $("#foodInput").val().trim();
-
 	foodArr.push(food);
 
-renderButtons();
+	//call renderButtons function to make the new input value a button and display within foodButtons div
+	renderButtons();
 
+	//empty out the foodInput text field
+    $("#foodInput").val("");
 
 });
 
- $(document).on("click", ".foodBtn", displayFood);
+    $("#foodDiv").on('click','img', function() {
+      
+    var state = $(this).attr("state");
+    if (state === "still") {
+      $(this).attr("state", "animate");
+      $(this).attr("src",$(this).attr("animate"));
+    }else{
+      (state === "animate");
+      $(this).attr("state", "still");
+      $(this).attr("src",$(this).attr("still"));
+    }
+    });
+
+$("#foodButtons").on("click", 'button', function() {
+	var myFood = $(this).attr("data-name");
+	var queryURL = "https://api.giphy.com/v1/gifs/search?q=" + myFood + "&api_key=dnxkPUxOa1usAjdexJlE3x3stA1g4n3v&limit=3";
+	$.ajax({
+		url:queryURL,
+		method:"GET"
+	}).then(function(response) {
+		var foodDiv = $("#foodDiv");
+		var foodGif = response.data;
+
+		for (var i=0; i<foodGif.length; i++) {
+			foodImg = $("<img>");
+			foodImg.attr("src",foodGif[i].images.fixed_height_still.url);
+		    foodImg.attr("state", "still");
+		    foodImg.attr("still",foodGif[i].images.fixed_height_still.url);
+		    foodImg.attr("animate",foodGif[i].images.fixed_height.url);
+		     var rating = foodGif[0].rating;
+		     var p = $("<p>").html("Rating: " + rating);
+		     foodDiv.append(foodImg, p)
+   }
+ })
+});
+
 renderButtons();
-
-
-
-
+});
 </script>
 
 
